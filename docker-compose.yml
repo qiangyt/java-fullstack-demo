@@ -1,0 +1,29 @@
+services:
+
+  mysql:
+    container_name: qiangyt.demo.mysql
+    image: mysql:8.0.22
+    env_file: ./default.env
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf:ro
+      - ./work/mysql:/var/lib/mysql:rw
+    healthcheck:
+      test: "mysql --user=demo_user --password=demo_password -D demo --execute \"SHOW TABLES;\""
+      interval: 3s
+      timeout: 1s
+      retries: 60
+
+  server:
+    container_name: qiangyt.demo.server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    env_file: ./default.env
+    ports:
+      - 8080:8080
+      - 8888:8888
+    depends_on:
+      mysql:
+        condition: service_healthy

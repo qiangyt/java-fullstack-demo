@@ -1,0 +1,32 @@
+app:
+  rdbms:
+    url: jdbc:mysql://${MYSQL_HOST:mysql}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:demo}?${MYSQL_JDBC_OPTIONS:useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    database: ${MYSQL_DATABASE:demo}
+    username: ${MYSQL_USER:demo_user}
+    password: ${MYSQL_PASSWORD:demo_password}
+
+spring:
+  application.name: demo
+
+  datasource:
+    url: ${app.rdbms.url}
+    username: ${app.rdbms.username}
+    password: ${app.rdbms.password}
+
+  flyway:
+    enabled: ${SPRING_FLYWAY_ENABLED:false}
+    clean-disabled: true
+    url: ${app.rdbms.url}
+    user: ${app.rdbms.username}
+    password: ${app.rdbms.password}
+    schemas: ${app.rdbms.database}
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect_resolvers: io.github.qiangyt.common.jpa.DialectResolverEx
+    hibernate:
+      use-new-id-generator-mappings: true
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
