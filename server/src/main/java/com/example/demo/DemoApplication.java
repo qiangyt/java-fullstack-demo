@@ -9,12 +9,15 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import com.example.demo.server.dao.MessageDao;
 import com.example.demo.server.entity.UserEntity;
+import com.example.demo.server.security.DemoSecurityMethods;
 
 import io.github.qiangyt.common.rest.RestConfig;
 import io.github.qiangyt.common.security.SecurityConfig;
 
 @SpringBootApplication(scanBasePackages = { "com.example.demo", "io.github.qiangyt.common" })
-@Import({ RestConfig.class, SecurityConfig.class })
+@Import({ RestConfig.class, SecurityConfig.class, DemoSecurityMethods.class })
+@EntityScan(basePackageClasses = UserEntity.class)
+@EnableJpaRepositories(basePackageClasses = MessageDao.class)
 @EnableJpaAuditing
 public class DemoApplication {
 

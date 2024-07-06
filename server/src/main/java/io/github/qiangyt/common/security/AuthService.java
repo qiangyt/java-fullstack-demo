@@ -14,10 +14,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.stereotype.Service;
 
+@Service
 @lombok.Setter
 @lombok.Getter
-public abstract class AbstractAuthService implements UserDetailsService {
+public class AuthService implements UserDetailsService {
 
     @Autowired
     JwtEncoder jwtEncoder;
@@ -25,53 +27,31 @@ public abstract class AbstractAuthService implements UserDetailsService {
     @Value("${security.jwt.expiry:2592000}") // seconds. 1 month by default
     long expiry;
 
-    
-    public String currentUserId() {
-        return currentUser() == null ? null : currentUser().getUsername();
-    }
+    @Autowired
+    SecurityMethods<?> methods;
 
-    public UserDetails currentUser() {
+    @SuppressWarnings("unchecked")
+    public <E> AuthUser<E> currentUser() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
             return null;
         }
 
-        return (UserDetails)auth.getPrincipal();
+        return (AuthUser<E>) auth.getPrincipal();
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var au = getAuthUser(username);
-        if (au == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        var r = getMethods().getUserByUserName(userName);
+        if (r == null) {
+            throw new UsernameNotFoundException("User not found with user name: " + userName);
         }
-
-        return org.springframework.security.core.userdetails.User.builder()                
-                .username(au.getId())
-                .password(/* {noop}" + */au.getPassword()).authorities("app")
-                // .roles(u.getRoles())
-                .build();
+        return r;
     }
 
-    @lombok.Getter
-    public static class AuthUser {
-
-        final String id;
-
-        final String password;
-
-        public AuthUser(String id, String password) {
-            this.id = id;
-            this.password = password;
-        }
-        
-    }
-
-
-    protected abstract AuthUser getAuthUser(String username);
-
-    public String generateToken(Authentication auth) {
-        Instant now = Instant.now();
+    public String generateJwt(Authentication auth) {
+        // var user = currentUser();
+        var now = Instant.now();
         var expiredAt = now.plusSeconds(getExpiry());
 
         var scope = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(" "));

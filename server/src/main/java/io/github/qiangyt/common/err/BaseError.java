@@ -1,9 +1,10 @@
 package io.github.qiangyt.common.err;
 
 import java.util.Date;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+
+import io.github.qiangyt.common.rest.ErrorResponse;
 
 /**
  * Base class for all exception classes. Generally not used directly; typically, one of its subclasses is used instead.
@@ -153,9 +154,9 @@ public class BaseError extends RuntimeException {
      * Export to a Map. Cascading exceptions are not included. For RESTful APIs, this map serves as the HTTP response
      * body.
      */
-    public Map<String, Object> toSpringMvcResponse() {
-        return Map.of("timestamp", new Date(), "status", getStatus().value(), "error", getMessage(), "params",
-                getParams());
+    public ErrorResponse toResponse() {
+        return ErrorResponse.builder().timestamp(new Date()).status(getStatus().value()).error(getMessage())
+                .params(getParams()).build();
     }
 
 }

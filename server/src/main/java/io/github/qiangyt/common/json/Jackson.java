@@ -1,6 +1,7 @@
 package io.github.qiangyt.common.json;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -127,6 +128,18 @@ public class Jackson {
         }
     }
 
+    public <T> T from(InputStream stream, @Nonnull Class<T> clazz) {
+        if (stream == null) {
+            return null;
+        }
+
+        try {
+            return getMapper().readValue(stream, clazz);
+        } catch (IOException e) {
+            throw new InternalError(e);
+        }
+    }
+
     public <T> T from(ByteBuffer buf, @Nonnull Class<T> clazz) {
         if (buf == null) {
             return null;
@@ -165,6 +178,18 @@ public class Jackson {
 
         try {
             return getMapper().readValue(text, typeReference);
+        } catch (IOException e) {
+            throw new InternalError(e);
+        }
+    }
+
+    public <T> T from(InputStream stream, @Nonnull TypeReference<T> typeReference) {
+        if (stream == null) {
+            return null;
+        }
+
+        try {
+            return getMapper().readValue(stream, typeReference);
         } catch (IOException e) {
             throw new InternalError(e);
         }

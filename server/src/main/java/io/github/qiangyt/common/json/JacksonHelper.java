@@ -1,5 +1,7 @@
 package io.github.qiangyt.common.json;
 
+import java.io.InputStream;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import jakarta.annotation.Nonnull;
@@ -22,6 +24,14 @@ public class JacksonHelper {
     }
 
     public static <T> T from(String json, @Nonnull TypeReference<T> typeReference) {
+        return DEFAULT.from(json, typeReference);
+    }
+
+    public static <T> T from(InputStream json, @Nonnull Class<T> clazz) {
+        return DEFAULT.from(json, clazz);
+    }
+
+    public static <T> T from(InputStream json, @Nonnull TypeReference<T> typeReference) {
         return DEFAULT.from(json, typeReference);
     }
 

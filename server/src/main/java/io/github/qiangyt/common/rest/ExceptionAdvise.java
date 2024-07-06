@@ -2,7 +2,6 @@ package io.github.qiangyt.common.rest;
 
 import java.util.List;
 import java.util.Set;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolation;
@@ -38,7 +37,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ExceptionAdvise {
 
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<Map<String, Object>> handleError(Throwable ex) {
+    public ResponseEntity<ErrorResponse> handleError(Throwable ex) {
         var err = normalizeError(ex);
 
         var status = err.getStatus();
@@ -48,7 +47,7 @@ public class ExceptionAdvise {
             log.warn(ex.getMessage(), ex);
         }
 
-        return new ResponseEntity<>(err.toSpringMvcResponse(), status);
+        return new ResponseEntity<>(err.toResponse(), status);
     }
 
     public static BaseError normalizeError(Throwable ex) {

@@ -3,10 +3,13 @@ package io.github.qiangyt.common.rest;
 import java.util.List;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.context.annotation.Import;
 
 import io.github.qiangyt.common.json.Jackson;
@@ -20,6 +23,13 @@ import org.springframework.http.converter.HttpMessageConverter;
 @Import({ ExceptionAdvise.class })
 public class RestConfig implements WebMvcConfigurer {
 
+    ObjectMapper objectMapper = Jackson.buildDefaultMapper(false);
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return getObjectMapper();
+    }
+
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         for (int i = converters.size() - 1; i >= 0; i--) {
@@ -29,8 +39,7 @@ public class RestConfig implements WebMvcConfigurer {
             }
         }
 
-        var mapper = Jackson.buildDefaultMapper(false);
-        var jacksonConverter = new MappingJackson2HttpMessageConverter(mapper);
+        var jacksonConverter = new MappingJackson2HttpMessageConverter(getObjectMapper());
 
         converters.add(0, jacksonConverter);
     }
