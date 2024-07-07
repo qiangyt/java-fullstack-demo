@@ -8,12 +8,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import java.util.List;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.sdk.resp.CommentResp;
+import com.example.demo.sdk.resp.PostResp;
 import com.example.demo.sdk.resp.UserResp;
 
-import com.example.demo.sdk.req.MessageReq;
+import com.example.demo.sdk.req.CommentReq;
+import com.example.demo.sdk.req.PostReq;
 import com.example.demo.sdk.req.SignUpReq;
 
 import jakarta.validation.Valid;
@@ -35,7 +40,7 @@ public class DemoApiV1Rest {
     @Autowired
     DemoApiV1Facade facade;
 
-    @GetMapping("/users/_/{id}")
+    @GetMapping("/users/{id}")
     public UserResp getUser(@PathVariable @NotBlank String id) {
         return getFacade().getUser(id);
     }
@@ -56,9 +61,24 @@ public class DemoApiV1Rest {
         return "Hello, " + auth.getName() + "!";
     }
 
-    @PostMapping("/messages")
-    public String postMessage(@RequestBody @Valid MessageReq req) {
-        return getFacade().postMessage(req);
+    @PostMapping("/posts")
+    public String newPost(@RequestBody @Valid PostReq req) {
+        return getFacade().newPost(req);
+    }
+
+    @GetMapping("/posts")
+    public List<PostResp> listAllPosts() {
+        return getFacade().listAllPosts();
+    }
+
+    @PostMapping("/postsd/{postId}/comments")
+    public String newComment(@PathVariable String postId, @RequestBody @Valid CommentReq req) {
+        return getFacade().newComment(postId, req);
+    }
+
+    @GetMapping("/posts/{postId}/comments")
+    public List<CommentResp> listComments(@PathVariable String postId) {
+        return getFacade().listComments(postId);
     }
 
 }

@@ -18,13 +18,29 @@ CREATE UNIQUE INDEX `demo_user_idx_name` ON `demo_user`(`name`);
 CREATE UNIQUE INDEX `demo_user_idx_email` ON `demo_user`(`email`);
 
 
-
-CREATE TABLE `demo_message` (
+CREATE TABLE `demo_post` (
     `id`                 CHAR(22)      CHARACTER SET latin1   NOT NULL,
     
     `content`            VARCHAR(200)  NOT NULL,
-    `root_id`            CHAR(22)      CHARACTER SET latin1   NOT NULL,
-    `parent_id`          CHAR(22)      CHARACTER SET latin1,
+    
+    `created_at`         DATETIME(3)   NOT NULL,
+    `created_by`         CHAR(22)      CHARACTER SET latin1   NOT NULL,
+    
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB, DEFAULT CHARACTER SET utf8mb4;
+
+CREATE INDEX `demo_post_idx_id` ON `demo_post`(`id`(8));
+CREATE INDEX `demo_post_idx_created_at` ON `demo_post`(`created_at`);
+
+
+CREATE TABLE `demo_comment` (
+    `id`                 CHAR(22)      CHARACTER SET latin1   NOT NULL,
+    
+    `content`            VARCHAR(200)  NOT NULL,
+    `post_id`            CHAR(22)      CHARACTER SET latin1   NOT NULL,
+
+    -- if the parent_comment_id is null, it is a comment replied to the post, otherwise it is a comment replied to another comment.
+    `parent_comment_id`  CHAR(22)      CHARACTER SET latin1,
 
     `created_at`         DATETIME(3)   NOT NULL,
     `created_by`         CHAR(22)      CHARACTER SET latin1   NOT NULL,
@@ -32,9 +48,8 @@ CREATE TABLE `demo_message` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB, DEFAULT CHARACTER SET utf8mb4;
 
-CREATE INDEX `demo_message_idx_id` ON `demo_message`(`id`(8));
-CREATE INDEX `demo_message_idx_created_at` ON `demo_message`(`created_at`);
+CREATE INDEX `demo_comment_idx_id` ON `demo_comment`(`id`(8));
 
-CREATE INDEX `demo_comment_idx_root_id` ON `demo_message`(`root_id`(8));
+CREATE INDEX `demo_comment_idx_post_id` ON `demo_comment`(`post_id`(8));
 
 

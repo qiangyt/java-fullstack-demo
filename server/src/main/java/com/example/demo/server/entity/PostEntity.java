@@ -12,38 +12,31 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import io.github.qiangyt.common.bean.BaseEntity;
-import com.example.demo.sdk.resp.MessageResp;
-import com.example.demo.sdk.req.MessageReq;
 
-//import org.springframework.data.annotation.CreatedBy;
+import com.example.demo.sdk.resp.PostResp;
+import com.example.demo.sdk.req.PostReq;
 
 @lombok.Getter
 @lombok.Setter
 @lombok.NoArgsConstructor
 @lombok.experimental.SuperBuilder
 @Entity
-@Table(name = "demo_message")
-public class MessageEntity extends BaseEntity {
+@Table(name = "demo_post")
+public class PostEntity extends BaseEntity {
 
     @Mapper
-    public static interface MessageMapper {
+    public static interface PostMapper {
 
-        MessageEntity map(MessageReq req);
+        PostEntity map(PostReq req);
 
         @Mapping(target = "createdBy", source = "entity.createdBy.name")
-        MessageResp map(MessageEntity entity);
+        PostResp map(PostEntity entity);
     }
 
-    public static final MessageMapper MESSAGE_MAPPER = Mappers.getMapper(MessageMapper.class);
+    public static final PostMapper POST_MAPPER = Mappers.getMapper(PostMapper.class);
 
     @Column
     String content;
-
-    @Column(name = "root_id")
-    String rootId;
-
-    @Column(name = "parent_id")
-    String parentId;
 
     // @CreatedBy
     @ManyToOne(fetch = FetchType.EAGER)

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Nullable
-public interface UserDao extends UserDaoEx, JpaDao<UserEntity, String> {
+public interface UserDao extends JpaDao<UserEntity, String> {
 
     UserEntity getByName(String name);
 

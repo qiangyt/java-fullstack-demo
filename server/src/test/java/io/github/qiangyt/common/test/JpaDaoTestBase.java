@@ -105,10 +105,10 @@ public class JpaDaoTestBase<E, ID, D extends JpaDao<E, ID>> {
   public Map<String, E> mapEntitiesById(List<E> entities) {
     var r = new HashMap<String, E>();
 
-    for (var entity : entities) {
-      var map = toMap(entity);
+    for (var ent : entities) {
+      var map = toMap(ent);
       String identifier = (String)map.get("id");
-      r.put(identifier, entity);
+      r.put(identifier, ent);
     }
     return r;
   }

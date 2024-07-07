@@ -1,8 +1,10 @@
 package com.example.demo.sdk;
 
-import com.example.demo.sdk.resp.MessageResp;
+import com.example.demo.sdk.resp.CommentResp;
+import com.example.demo.sdk.resp.PostResp;
 import com.example.demo.sdk.resp.UserResp;
-import com.example.demo.sdk.req.MessageReq;
+import com.example.demo.sdk.req.CommentReq;
+import com.example.demo.sdk.req.PostReq;
 import com.example.demo.sdk.req.SignUpReq;
 
 import java.util.List;
@@ -23,21 +25,33 @@ public class DemoAppV1Client implements DemoApiV1 {
     }
 
     @Override
-    public String postMessage(MessageReq req) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'postMessage'");
-    }
-
-    @Override
-    public List<MessageResp> listAllMessages() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listAllMessages'");
-    }
-
-    @Override
     public UserResp getUser(String id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getUser'");
+    }
+
+    @Override
+    public String newPost(PostReq req) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'newPost'");
+    }
+
+    @Override
+    public List<PostResp> listAllPosts() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'listAllPosts'");
+    }
+
+    @Override
+    public String newComment(String postId, CommentReq req) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'newComment'");
+    }
+
+    @Override
+    public List<CommentResp> listComments(String postId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'listComments'");
     }
 
 }
