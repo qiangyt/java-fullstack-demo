@@ -10,6 +10,8 @@
   - Nginx: 
     在docker容器中build并部署Vue App，并配置8000端口上的前端静态资源服务器, 并反向代理REST API到Java server端
 
+  然后打开浏览器，访问http://localhost:8000即可访问。
+
 # 关于数据库初始化：
 
   Java springboot application中使用flyway 进行数据库初始化，flyway会自动读取`server/main/resources/db/migration`目录下的sql文件，并执行。
@@ -80,5 +82,6 @@
    2. 关于深层次的评论：
       
       1）数据库表里统一使用message表存储评论和留言，每个message既有parentId（回复目标的id），又有postId（留言的id）。留言的parentId为null，而postId是留言自身的id。
+         postId字段对于这次实现来说实际上是多余的，是为了方便后续根据一个postId获取该留言下的所有层级的评论而保留（因为考虑现实中不可能真的一次性读入所有留言和评论）。
 
       2）为了在实现一次性取得所有评论的同时避免根据parentId层层执行SQL查询，demo里简单粗暴的用单条SQL一次性读入全表，然后在内存中遍历所有message并建立它们的树形结构。
