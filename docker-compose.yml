@@ -4,8 +4,8 @@ services:
     container_name: qiangyt.demo.mysql
     image: mysql:8.0.22
     env_file: ./default.env
-    ports:
-      - 3306:3306
+    #ports:
+    #  - 3306:3306
     volumes:
       - ./mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf:ro
       - ./work/mysql:/var/lib/mysql:rw
