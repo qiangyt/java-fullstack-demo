@@ -10,7 +10,7 @@
   - Nginx: 
     在docker容器中build并部署Vue App，并配置8000端口上的前端静态资源服务器, 并反向代理REST API到Java server端
 
-  然后打开浏览器，访问http://localhost:8000即可访问。
+  然后打开浏览器，访问http://localhost:8000   即可访问。
 
 # 关于数据库初始化：
 
@@ -50,11 +50,11 @@
 
   ## server端：
      
-  - 使用Spring Initializr（https://start.spring.io）创建的使用maven构建结构的项目
+  - 使用Spring Initializr（https://start.spring.io）  创建的使用maven构建结构的项目
 
   - src中分两部分package：
        
-   1. io.github.qiangyt.common: 自用的一些基础代码，复制自https://github.com/qiangyt/java-common（做了一些调整）
+   1. io.github.qiangyt.common: 自用的一些基础代码，复制自https://github.com/qiangyt/java-common  （做了一些调整）
 
    2. com.example.demo: 本次示例直接使用的代码
 
