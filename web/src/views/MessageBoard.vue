@@ -1,10 +1,12 @@
 <!-- 主页面组件，包含登录/登出按钮、新留言按钮、留言和评论树的显示逻辑，以及新留言和新评论对话框的实现 -->
 <template>
   <div>
+    <div v-if="sessionStore.authenticated">当前用户：{{ sessionStore.session.user.name + " (" + sessionStore.session.user.email + ")" }}</div>
+    <br>
     <el-button @click="refreshMessages">刷新</el-button>
     <el-button @click="toggleSignIn">{{ sessionStore.authenticated ? '退出' : '登录' }}</el-button>
     <el-button @click="openNewPostDialog" v-if="sessionStore.authenticated">发表新留言</el-button>
-
+    <br><br><br>
     <div class="custom-tree-container" style="margin-bottom: 20px;">
       <el-tree style="max-width: 600px" :data="messages" :props="{ children: 'replies', label: 'content' }"
         node-key="id" default-expand-all :expand-on-click-node="false">
