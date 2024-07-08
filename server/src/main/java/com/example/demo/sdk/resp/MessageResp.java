@@ -16,6 +16,10 @@ public class MessageResp extends BaseBean {
 
     String createdBy;
 
+    String postId;
+
+    String parentId;
+
     @Builder.Default
     List<MessageResp> replies = new ArrayList<>();
 

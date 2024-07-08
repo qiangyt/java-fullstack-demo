@@ -1,20 +1,19 @@
 package com.example.demo.server.service;
 
+import io.github.qiangyt.common.misc.IdGenerator;
 import io.github.qiangyt.common.misc.UuidHelper;
 
 import com.example.demo.sdk.req.CommentReq;
 import com.example.demo.sdk.req.PostReq;
 import com.example.demo.sdk.resp.MessageResp;
 import com.example.demo.server.dao.MessageDao;
-import com.example.demo.server.entity.MessageEntity;
 import com.example.demo.server.entity.UserEntity;
 import static com.example.demo.server.entity.MessageEntity.MAPPER;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,84 +27,77 @@ public class MessageService {
     @Autowired
     MessageDao dao;
 
+    @Autowired
+    IdGenerator idGenerator;
+
     public void ensurePostExists(String id) {
         getDao().get(true, id);
         //TODO: ensure it is a post instead of a comment
     }
 
-    public String newComment(UserEntity creator, String postId, CommentReq req) {
-        var r = MAPPER.map(req);
-        r.setId(UuidHelper.shortUuid());
-        r.setCreatedBy(creator);
-        r.setPostId(postId);
-        r.setParentId(postId);
+    public MessageResp newComment(UserEntity creator, CommentReq req) {
+        var parentId = req.getParentId();
+        var parent = getDao().get(true, parentId);
 
-        return getDao().save(r).getId();
+        var r = MAPPER.map(req);
+        r.setId(getIdGenerator().newId());
+        r.setCreatedBy(creator);
+        r.setPostId(parent.getPostId());
+        r.setParentId(parentId);
+
+        return MAPPER.map(getDao().save(r));
     }
 
-    public String newPost(UserEntity creator, PostReq req) {
+    public MessageResp newPost(UserEntity creator, PostReq req) {
+        var id = getIdGenerator().newId();
+
         var r = MAPPER.map(req);
-        r.setId(UuidHelper.shortUuid());
+        r.setId(id);
         r.setCreatedBy(creator);
+        r.setPostId(id);
+        //r.setParentId(null);
 
-        return getDao().save(r).getId();
-    }
-    
-    // Instead of this approach which is composed of 2 steps (find all root
-    // messages, then find all their replies), another approach is to use a single
-    // step which one-time finds all messages and then build the hiearchy in memory.
-    // The alternative approach is more efficient but not fits well for real-world
-    // applications which definitely needs pagination at the root levels of
-    // messages.
-    // So considering we will need to support pagination, we take this 2-step
-    // approach for now.
-    public List<MessageResp> listAllPosts() {
-        // step 1: find all root messages
-        var postEntities = getDao().findByParentIdIsNull();
-
-        // step 2: find all their replies (includes replies of replies, etc.) and build
-        // the hiearchy in memory
-        return listReplies(postEntities);
+        return MAPPER.map(getDao().save(r));
     }
 
     /**
-     * Find all root message replies (includes replies of replies, etc.) and build the hiearchy in memory
-     *
-     * @param postEntities
+     * Find all posts includes replies of replies. Build the hiearchy in memory
      *
      * @return
      */
-    List<MessageResp> listReplies(Collection<MessageEntity> postEntities) {
+    public List<MessageResp> listAllPosts() {
         // initialize the root message responses
-        var respMap = new HashMap<String, MessageResp>();
-        postEntities.forEach(ent -> respMap.put(ent.getId(), MAPPER.map(ent)));
+        var msgMap = new HashMap<String, MessageResp>();
+        var posts = new LinkedList<MessageResp>();
 
-        // step 1: find all their replies
-        var postIds = postEntities.stream().map(m -> m.getId()).toList();
-        var repliesEntities = getDao().findByPostIdIn(postIds);
-        repliesEntities.forEach(ent -> respMap.put(ent.getId(), MAPPER.map(ent)));
+        var ents = dao.findAll();
+        ents.forEach(ent -> {
+            var msg = MAPPER.map(ent);
+            msgMap.put(ent.getId(), msg);
+            if (ent.getParentId() == null) {
+                // found a post
+                posts.add(msg);
+            }
+        });
 
-        // step 2: traverse the replies entities, build corresponding response object
-        // and linked it
-        // with their parent response to build the hiearchy
-        repliesEntities.forEach(ent -> {
-            var parentId = ent.getParentId();
+        // traverse to build and linked it to their parent response to build the hiearchy
+        msgMap.values().forEach(msg -> {
+            var parentId = msg.getParentId();
             if (parentId != null) {
-                var parentResp = respMap.get(parentId);
-                var replyResp = respMap.get(ent.getId());
-                parentResp.getReplies().add(replyResp);
+                var parent = msgMap.get(parentId);
+                parent.getReplies().add(msg);
             }
         });
 
         // step 3: sort the replies by reply time
-        respMap.values().forEach(resp -> {
-            Collections.sort(resp.getReplies(), Comparator.comparing(MessageResp::getCreatedAt).reversed());
+        var sorter = Comparator.comparing(MessageResp::getCreatedAt).reversed();
+        msgMap.values().forEach(msg -> {
+            Collections.sort(msg.getReplies(), sorter);
         });
 
-        // now build the root responses as a list, keep the original order
-        var r = new ArrayList<MessageResp>(postEntities.size());
-        postEntities.forEach(ent -> r.add(respMap.get(ent.getId())));
-        return r;
+        // sort the posts
+        Collections.sort(posts, sorter);
+        return posts;
     }
 
 }

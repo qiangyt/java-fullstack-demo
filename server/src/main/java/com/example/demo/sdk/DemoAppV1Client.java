@@ -30,7 +30,7 @@ public class DemoAppV1Client implements DemoApiV1 {
     }
 
     @Override
-    public String newPost(PostReq req) {
+    public MessageResp newPost(PostReq req) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'newPost'");
     }
@@ -42,7 +42,7 @@ public class DemoAppV1Client implements DemoApiV1 {
     }
 
     @Override
-    public String newComment(String postId, CommentReq req) {
+    public MessageResp newComment(CommentReq req) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'newComment'");
     }

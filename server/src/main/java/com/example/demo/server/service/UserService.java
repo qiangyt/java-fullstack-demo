@@ -1,7 +1,7 @@
 package com.example.demo.server.service;
 
 import io.github.qiangyt.common.err.BadRequest;
-import io.github.qiangyt.common.misc.UuidHelper;
+import io.github.qiangyt.common.misc.IdGenerator;
 
 import com.example.demo.sdk.ErrorCode;
 import com.example.demo.sdk.req.SignUpReq;
@@ -20,6 +20,9 @@ public class UserService {
 
     @Autowired
     UserDao dao;
+
+    @Autowired
+    IdGenerator idGenerator;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -45,7 +48,7 @@ public class UserService {
         }
 
         var r = USER_MAPPER.map(req);
-        r.setId(UuidHelper.shortUuid());
+        r.setId(getIdGenerator().newId());
 
         var hashedPassword = getPasswordEncoder().encode(req.getPassword());
         r.setPassword(hashedPassword);

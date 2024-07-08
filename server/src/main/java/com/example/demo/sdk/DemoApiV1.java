@@ -17,10 +17,10 @@ public interface DemoApiV1 {
 
     UserResp getUser(String id);
 
-    String newPost(PostReq req);
+    MessageResp newPost(PostReq req);
 
     List<MessageResp> listAllPosts();
 
-    String newComment(String postId, CommentReq req);
+    MessageResp newComment(CommentReq req);
 
 }

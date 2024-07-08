@@ -61,7 +61,7 @@ public class DemoApiV1Rest {
     }
 
     @PostMapping("/posts")
-    public String newPost(@RequestBody @Valid PostReq req) {
+    public MessageResp newPost(@RequestBody @Valid PostReq req) {
         return getFacade().newPost(req);
     }
 
@@ -70,14 +70,14 @@ public class DemoApiV1Rest {
         return getFacade().listAllPosts();
     }
 
-    @PostMapping("/posts/{postId}/comments")
-    public String newComment(@PathVariable String postId, @RequestBody @Valid CommentReq req) {
-        return getFacade().newComment(postId, req);
-    }
-
     //@GetMapping("/posts/{postId}/comments")
     //public List<MessageResp> listAllPosts(@PathVariable String postId) {
     //    return getFacade().listComments(postId);
     //}
+
+    @PostMapping("/comments")
+    public MessageResp newComment(@RequestBody @Valid CommentReq req) {
+        return getFacade().newComment(req);
+    }
 
 }

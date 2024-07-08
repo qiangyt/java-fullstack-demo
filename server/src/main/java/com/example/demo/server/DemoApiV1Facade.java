@@ -58,16 +58,15 @@ public class DemoApiV1Facade implements DemoApiV1 {
     }
 
     @Override
-    public String newPost(PostReq req) {
+    public MessageResp newPost(PostReq req) {
         var creator = currentUser();
         return getMessageService().newPost(creator, req);
     }
 
     @Override
-    public String newComment(String postId, CommentReq req) {
-        getMessageService().ensurePostExists(postId);
+    public MessageResp newComment(CommentReq req) {
         var creator = currentUser();
-        return getMessageService().newComment(creator, postId, req);
+        return getMessageService().newComment(creator, req);
     }
 
     @Override

@@ -2,14 +2,13 @@ package com.example.demo.server.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Date;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -21,6 +20,8 @@ import com.example.demo.server.dao.MessageDao;
 import com.example.demo.server.entity.MessageEntity;
 import com.example.demo.server.entity.UserEntity;
 
+import io.github.qiangyt.common.misc.IdGenerator;
+
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -30,9 +31,12 @@ public class MessageServiceTest {
     @Mock
     MessageDao dao;
 
+    @Mock
+    IdGenerator idGenerator;
+
     @InjectMocks
     MessageService target;
-
+    
     @Test
     void test_ensurePostExists() {
         var p = MessageEntity.builder().id("0").build();
@@ -50,15 +54,18 @@ public class MessageServiceTest {
         var resultedPost = new MessageEntity();
         resultedPost.setId("0000");
         when(dao.save(any())).thenReturn(resultedPost);
+        when(idGenerator.newId()).thenReturn("0000");
 
-        assertEquals("0000", target.newPost(creator, req));
+        assertEquals("0000", target.newPost(creator, req).getId());
 
         var captor = ArgumentCaptor.forClass(MessageEntity.class);
         verify(dao).save(captor.capture());
 
         var savedPost = captor.getValue();
-        assertNotNull(savedPost.getId());
+        assertEquals("0000", savedPost.getId());
         assertEquals("content", savedPost.getContent());
+        assertEquals("0000", savedPost.getPostId());
+        assertNull(savedPost.getParentId());
         assertSame(creator, savedPost.getCreatedBy());
     }
 
@@ -66,23 +73,27 @@ public class MessageServiceTest {
     @Test
     void test_newComment() {
         var creator = UserEntity.builder().id("u").build();
-        var req = CommentReq.builder().content("c").parentId("p").build();
+        var req = CommentReq.builder().content("c").parentId("parent-id").build();
+
+        var parent = MessageEntity.builder().id("parent-id").postId("post-id").build();
+        when(dao.get(true, "parent-id")).thenReturn(parent);
 
         var resultedComment = new MessageEntity();
         resultedComment.setId("0000");
         when(dao.save(any())).thenReturn(resultedComment);
+        when(idGenerator.newId()).thenReturn("0000");
 
-        assertEquals("0000", target.newComment(creator, "p", req));
+        assertEquals("0000", target.newComment(creator, req).getId());
 
         var captor = ArgumentCaptor.forClass(MessageEntity.class);
         verify(dao).save(captor.capture());
 
         var savedComment = captor.getValue();
-        assertNotNull(savedComment.getId());
+        assertEquals("0000", savedComment.getId());
         assertEquals("c", savedComment.getContent());
+        assertEquals("post-id", savedComment.getPostId());
+        assertEquals("parent-id", savedComment.getParentId());
         assertSame(creator, savedComment.getCreatedBy());
-        assertEquals("p", savedComment.getPostId());
-        assertEquals("p", savedComment.getParentId());
     }
 
     /*
@@ -96,25 +107,26 @@ public class MessageServiceTest {
      *      ├── reply31
      *      └── reply32
      */
-    @Disabled
+    //@Disabled
     @Test
-    void testListAllMessages() {
+    void test_listAllPosts() {
         var milli = System.currentTimeMillis();
 
-        var expectedPost1 = MessageEntity.builder().id("post1").createdAt(new Date(milli--)).build();
+        var expectedPost1 = MessageEntity.builder().id("post1").createdAt(new Date(milli--)).postId("post1").build();
 
-        var expectedPost2 = MessageEntity.builder().id("post2").createdAt(new Date(milli--)).build();
-        var expectedReply21 = MessageEntity.builder().id("reply21").createdAt(new Date(milli--)).postId("post2").parentId(null).build();
-        var expectedReply22 = MessageEntity.builder().id("reply22").createdAt(new Date(milli--)).postId("post2").parentId(null).build();
+        var expectedPost2 = MessageEntity.builder().id("post2").createdAt(new Date(milli--)).postId("post2").build();
+        var expectedReply21 = MessageEntity.builder().id("reply21").createdAt(new Date(milli--)).postId("post2").parentId("post2").build();
+        var expectedReply22 = MessageEntity.builder().id("reply22").createdAt(new Date(milli--)).postId("post2").parentId("post2").build();
         var expectedReply221 = MessageEntity.builder().id("reply221").createdAt(new Date(milli--)).postId("post2").parentId("reply22").build();
         var expectedReply222 = MessageEntity.builder().id("reply222").createdAt(new Date(milli--)).postId("post2").parentId("reply22").build();
 
-        var expectedPost3 = MessageEntity.builder().id("post3").createdAt(new Date(milli--)).build();
-        var expectedReply31 = MessageEntity.builder().id("reply31").createdAt(new Date(milli--)).postId("post3").parentId(null).build();
-        var expectedReply32 = MessageEntity.builder().id("reply32").createdAt(new Date(milli--)).postId("post3").parentId(null).build();
+        var expectedPost3 = MessageEntity.builder().id("post3").createdAt(new Date(milli--)).postId("post3").build();
+        var expectedReply31 = MessageEntity.builder().id("reply31").createdAt(new Date(milli--)).postId("post3").parentId("post3").build();
+        var expectedReply32 = MessageEntity.builder().id("reply32").createdAt(new Date(milli--)).postId("post3").parentId("post3").build();
 
-        when(dao.findByParentIdIsNull()).thenReturn(List.of(expectedPost1, expectedPost2, expectedPost3));
-        when(dao.findByPostIdIn(List.of("post1", "post2", "post3"))).thenReturn(List.of(expectedReply21, expectedReply22, expectedReply221, expectedReply222, expectedReply31, expectedReply32));
+        when(dao.findAll()).thenReturn(List.of(expectedPost1, 
+                                               expectedPost2, expectedReply21, expectedReply22, expectedReply221, expectedReply222, 
+                                               expectedPost3, expectedReply31, expectedReply32));
 
         var r = target.listAllPosts();
         assertEquals(3, r.size());

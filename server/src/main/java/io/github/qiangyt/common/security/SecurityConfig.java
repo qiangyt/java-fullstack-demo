@@ -50,7 +50,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authConfig,
             ObjectMapper objectMapper) throws Exception {
-        var publicPaths = new String[] { getTokenPath(), getSignUpPath(), getSignInPath(), "/rest/posts" };
+        //var publicPaths = new String[] { getTokenPath(), getSignUpPath(), getSignInPath(), "/rest/posts" };
 
         // http.authorizeHttpRequests(a ->
         // a.requestMatchers(publicPaths).permitAll().anyRequest().authenticated());

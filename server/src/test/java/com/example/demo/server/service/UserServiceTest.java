@@ -6,6 +6,7 @@ import com.example.demo.server.dao.UserDao;
 import com.example.demo.server.entity.UserEntity;
 
 import io.github.qiangyt.common.err.BadRequest;
+import io.github.qiangyt.common.misc.IdGenerator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,9 @@ class UserServiceTest {
 
     @Mock
     PasswordEncoder passwordEncoder;
+
+    @Mock
+    IdGenerator idGenerator;
 
     @InjectMocks
     UserService userService;
@@ -72,6 +76,7 @@ class UserServiceTest {
 
         when(passwordEncoder.encode(signUpReq.getPassword())).thenReturn("hashedPassword");
         when(dao.save(any(UserEntity.class))).thenReturn(expected);
+        when(idGenerator.newId()).thenReturn("testId");
 
         var result = userService.signUp(signUpReq);
 
