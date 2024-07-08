@@ -1,6 +1,6 @@
 # 构建和运行
 
-  在根目录下执行`./up.sh`，会使用docker-compose构建整套环境然后启动，包括：
+  在根目录下执行`./up.sh`(Mac)或`./up.cmd`（Windows），会使用docker-compose构建整套环境然后启动这个环境，最终可以在浏览器中自动打开网站首页（条件所限，Mac中未测试这一点），包括：
   
   - MySQL：8.x
   
@@ -16,7 +16,7 @@
 
   Java springboot application中使用flyway 进行数据库初始化，flyway会自动读取`server/main/resources/db/migration`目录下的sql文件，并执行。
 
-  默认添加了一个用户：用户名admin, 密码123456A@b
+  默认添加了一个用户：用户名admin, 密码123456A@b。密码是bcrypt带盐hash。
 
 # 技术栈：
   
