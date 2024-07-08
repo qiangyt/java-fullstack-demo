@@ -1,5 +1,5 @@
 <template>
-  <el-container style="height: 100vh; justify-content: center; align-items: center;">
+  <el-container style="justify-content: center; align-items: center;">
     <el-card class="box-card" style="width: 400px;">
       <div slot="header" class="clearfix">
         <span>登录</span>

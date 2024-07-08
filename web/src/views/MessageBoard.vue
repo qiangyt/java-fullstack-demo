@@ -13,6 +13,7 @@
         <template #default="{ node, data }">
           <span class="tree-node">
             <span>{{ node.label }}</span>
+            <span>{{ data.createdBy }} ({{ formatDateFromMilliseconds(data.createdAt) }})</span>
             <span>
               <a @click="replyToComment(data)" v-if="sessionStore.authenticated"> 回复 </a>
             </span>
@@ -57,6 +58,7 @@ import { RouterLink, useRouter } from 'vue-router'
 import Node from 'element-plus/es/components/tree/src/model/node';
 import { useSessionStore } from '@/stores/session'
 import * as messageApi from '@/services/message'
+import { formatDateFromMilliseconds } from '@/utils/date'
 
 const router = useRouter()
 const sessionStore = useSessionStore()
