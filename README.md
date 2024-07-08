@@ -70,7 +70,7 @@
       
    4. logback.xml: logback配置文件
 
-  web端是常规的vite + vue3项目结构，不再赘述。
+  web端是常规的vite + vue3项目结构，不再赘述。页面直接用了Element Plus的Tree等组件，整体上未做美观细节的处理。
   
   ## 部分实现细节的说明：
         
