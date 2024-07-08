@@ -9,7 +9,7 @@ import io.github.qiangyt.common.rest.ErrorResponse;
 
 public interface SecurityMethods<E> {
 
-    AuthUser<E> getUserByUserName(String username);
+    AuthUser<E> getUser(String name);
 
     Object buildSignInOkResponse(AuthUser<E> user, String token);
 

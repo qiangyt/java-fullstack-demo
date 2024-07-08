@@ -37,12 +37,12 @@ public class AuthService implements UserDetailsService {
             return null;
         }
         
-        return (AuthUser<E>)getMethods().getUserByUserName(auth.getName());
+        return (AuthUser<E>)getMethods().getUser(auth.getName());
     }
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        var r = getMethods().getUserByUserName(userName);
+        var r = getMethods().getUser(userName);
         if (r == null) {
             throw new UsernameNotFoundException("User not found with user name: " + userName);
         }

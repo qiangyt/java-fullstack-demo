@@ -21,8 +21,13 @@ public class DemoSecurityMethods implements SecurityMethods<Object> {
     UserService userService;
 
     @Override
-    public AuthUser<Object> getUserByUserName(String userName) {
-        var u = getUserService().getByName(userName);
+    public AuthUser<Object> getUser(String userName) {
+        UserEntity u;
+        if (userName.contains("@")) {
+            u = getUserService().getByEmail(userName);
+        } else {
+            u = getUserService().getByName(userName);
+        }
         if (u == null) {
             return null;
         }

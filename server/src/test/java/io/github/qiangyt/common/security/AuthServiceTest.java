@@ -43,7 +43,7 @@ public class AuthServiceTest {
     public void testLoadUserByUsername_UserFound() {
         var username = "foundUser";
         var expected = AuthUser.simple(username, "pwd", null);
-        when(securityMethods.getUserByUserName(username)).thenReturn(expected);
+        when(securityMethods.getUser(username)).thenReturn(expected);
         
         var actual = authService.loadUserByUsername(username);
         assertSame(expected, actual);
