@@ -46,9 +46,8 @@ public class MessageEntity extends BaseEntity {
     @Column(name = "post_id")
     String postId;
 
-    // if the parentCommentId is not null, this is a comment replies to another comment, otherwise it is a comment replies to the post
-    @Column(name = "parent_comment_id")
-    String parentCommentId;
+    @Column(name = "parent_id")
+    String parentId;
 
     // @CreatedBy
     @ManyToOne(fetch = FetchType.EAGER)

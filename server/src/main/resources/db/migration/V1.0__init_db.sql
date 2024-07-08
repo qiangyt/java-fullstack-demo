@@ -22,8 +22,8 @@ CREATE TABLE `demo_message` (
     `id`                 CHAR(22)      CHARACTER SET latin1   NOT NULL,
     
     `content`            VARCHAR(200)  NOT NULL,
-    `post_id`            CHAR(22)      CHARACTER SET latin1   NOT NULL,
-    `parent_comment_id`  CHAR(22)      CHARACTER SET latin1,
+    `post_id`            CHAR(22)      CHARACTER SET latin1,
+    `parent_id`          CHAR(22)      CHARACTER SET latin1,
 
     `created_at`         DATETIME(3)   NOT NULL,
     `created_by`         CHAR(22)      CHARACTER SET latin1   NOT NULL,
@@ -35,5 +35,6 @@ CREATE INDEX `demo_message_idx_id` ON `demo_message`(`id`(8));
 CREATE INDEX `demo_message_idx_created_at` ON `demo_message`(`created_at`);
 
 CREATE INDEX `demo_comment_idx_post_id` ON `demo_message`(`post_id`(8));
+CREATE INDEX `demo_comment_idx_parent_id` ON `demo_message`(`parent_id`(8));
 
 

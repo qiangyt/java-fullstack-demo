@@ -38,6 +38,7 @@ public class MessageService {
         r.setId(UuidHelper.shortUuid());
         r.setCreatedBy(creator);
         r.setPostId(postId);
+        r.setParentId(postId);
 
         return getDao().save(r).getId();
     }
@@ -60,7 +61,7 @@ public class MessageService {
     // approach for now.
     public List<MessageResp> listAllPosts() {
         // step 1: find all root messages
-        var postEntities = getDao().findByPostIdIsNull();
+        var postEntities = getDao().findByParentIdIsNull();
 
         // step 2: find all their replies (includes replies of replies, etc.) and build
         // the hiearchy in memory
@@ -88,7 +89,7 @@ public class MessageService {
         // and linked it
         // with their parent response to build the hiearchy
         repliesEntities.forEach(ent -> {
-            var parentId = ent.getParentCommentId();
+            var parentId = ent.getParentId();
             if (parentId != null) {
                 var parentResp = respMap.get(parentId);
                 var replyResp = respMap.get(ent.getId());

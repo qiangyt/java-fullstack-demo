@@ -36,8 +36,8 @@ public class AuthService implements UserDetailsService {
         if (auth == null) {
             return null;
         }
-
-        return (AuthUser<E>) auth.getPrincipal();
+        
+        return (AuthUser<E>)getMethods().getUserByUserName(auth.getName());
     }
 
     @Override

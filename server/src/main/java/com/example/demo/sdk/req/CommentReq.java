@@ -16,7 +16,7 @@ public class CommentReq {
     String content;
 
     // null if is a new root message
-    String parentCommentId;
+    String parentId;
 
     @Override
     public String toString() {

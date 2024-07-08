@@ -32,7 +32,7 @@ public class MessageDaoTest extends JpaDaoTestBase<MessageEntity, String, Messag
 
     @Disabled
     @Test
-    void test_findByPostIdIsNullc() {
+    void test_findByParentIdIsNullc() {
         var em = getEntityManager();
         var milli = System.currentTimeMillis();
 
@@ -51,7 +51,7 @@ public class MessageDaoTest extends JpaDaoTestBase<MessageEntity, String, Messag
         var m3 = MessageEntity.builder().id(UuidHelper.shortUuid()).content("m3").createdBy(u3).createdAt(new Date(milli--)).postId(null).build();
         em.persist(m3);
 
-        var r = getDao().findByPostIdIsNull();
+        var r = getDao().findByParentIdIsNull();
         assertNotNull(r);
         assertEquals(2, r.size());
 

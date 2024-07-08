@@ -66,7 +66,7 @@ public class MessageServiceTest {
     @Test
     void test_newComment() {
         var creator = UserEntity.builder().id("u").build();
-        var req = CommentReq.builder().content("c").parentCommentId("parent").build();
+        var req = CommentReq.builder().content("c").parentId("p").build();
 
         var resultedComment = new MessageEntity();
         resultedComment.setId("0000");
@@ -82,7 +82,7 @@ public class MessageServiceTest {
         assertEquals("c", savedComment.getContent());
         assertSame(creator, savedComment.getCreatedBy());
         assertEquals("p", savedComment.getPostId());
-        assertEquals("parent", savedComment.getParentCommentId());
+        assertEquals("p", savedComment.getParentId());
     }
 
     /*
@@ -104,16 +104,16 @@ public class MessageServiceTest {
         var expectedPost1 = MessageEntity.builder().id("post1").createdAt(new Date(milli--)).build();
 
         var expectedPost2 = MessageEntity.builder().id("post2").createdAt(new Date(milli--)).build();
-        var expectedReply21 = MessageEntity.builder().id("reply21").createdAt(new Date(milli--)).postId("post2").parentCommentId(null).build();
-        var expectedReply22 = MessageEntity.builder().id("reply22").createdAt(new Date(milli--)).postId("post2").parentCommentId(null).build();
-        var expectedReply221 = MessageEntity.builder().id("reply221").createdAt(new Date(milli--)).postId("post2").parentCommentId("reply22").build();
-        var expectedReply222 = MessageEntity.builder().id("reply222").createdAt(new Date(milli--)).postId("post2").parentCommentId("reply22").build();
+        var expectedReply21 = MessageEntity.builder().id("reply21").createdAt(new Date(milli--)).postId("post2").parentId(null).build();
+        var expectedReply22 = MessageEntity.builder().id("reply22").createdAt(new Date(milli--)).postId("post2").parentId(null).build();
+        var expectedReply221 = MessageEntity.builder().id("reply221").createdAt(new Date(milli--)).postId("post2").parentId("reply22").build();
+        var expectedReply222 = MessageEntity.builder().id("reply222").createdAt(new Date(milli--)).postId("post2").parentId("reply22").build();
 
         var expectedPost3 = MessageEntity.builder().id("post3").createdAt(new Date(milli--)).build();
-        var expectedReply31 = MessageEntity.builder().id("reply31").createdAt(new Date(milli--)).postId("post3").parentCommentId(null).build();
-        var expectedReply32 = MessageEntity.builder().id("reply32").createdAt(new Date(milli--)).postId("post3").parentCommentId(null).build();
+        var expectedReply31 = MessageEntity.builder().id("reply31").createdAt(new Date(milli--)).postId("post3").parentId(null).build();
+        var expectedReply32 = MessageEntity.builder().id("reply32").createdAt(new Date(milli--)).postId("post3").parentId(null).build();
 
-        when(dao.findByPostIdIsNull()).thenReturn(List.of(expectedPost1, expectedPost2, expectedPost3));
+        when(dao.findByParentIdIsNull()).thenReturn(List.of(expectedPost1, expectedPost2, expectedPost3));
         when(dao.findByPostIdIn(List.of("post1", "post2", "post3"))).thenReturn(List.of(expectedReply21, expectedReply22, expectedReply221, expectedReply222, expectedReply31, expectedReply32));
 
         var r = target.listAllPosts();
