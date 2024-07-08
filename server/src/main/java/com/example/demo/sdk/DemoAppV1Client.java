@@ -1,7 +1,6 @@
 package com.example.demo.sdk;
 
-import com.example.demo.sdk.resp.CommentResp;
-import com.example.demo.sdk.resp.PostResp;
+import com.example.demo.sdk.resp.MessageResp;
 import com.example.demo.sdk.resp.UserResp;
 import com.example.demo.sdk.req.CommentReq;
 import com.example.demo.sdk.req.PostReq;
@@ -37,7 +36,7 @@ public class DemoAppV1Client implements DemoApiV1 {
     }
 
     @Override
-    public List<PostResp> listAllPosts() {
+    public List<MessageResp> listAllPosts() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'listAllPosts'");
     }
@@ -47,11 +46,5 @@ public class DemoAppV1Client implements DemoApiV1 {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'newComment'");
     }
-
-    @Override
-    public List<CommentResp> listComments(String postId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listComments'");
-    }
-
+    
 }

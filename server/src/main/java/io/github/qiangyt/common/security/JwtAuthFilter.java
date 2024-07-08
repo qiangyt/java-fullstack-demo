@@ -2,6 +2,7 @@ package io.github.qiangyt.common.security;
 
 import io.github.qiangyt.common.json.JacksonHelper;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,8 +18,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
+
+// TODO：改用accessToken + refreshToken
 @lombok.Getter
 public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -42,7 +46,15 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
             throws AuthenticationException {
         try {
-            var c = JacksonHelper.from(req.getInputStream(), UserCredentials.class);
+            var body = IOUtils.toString(req.getInputStream(), StandardCharsets.UTF_8);
+            var c = JacksonHelper.from(body, UserCredentials.class);
+            if (c == null) {
+                return null;
+                //res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                //res.setContentType("application/json");
+                //var errorResponse = Map.of("error", "Request body is missing");
+                //res.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+            }
             return authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(c.getName(), c.getPassword(), Collections.emptyList()));
         } catch (IOException e) {

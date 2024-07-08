@@ -10,13 +10,13 @@ import lombok.Builder;
 @lombok.Setter
 @lombok.NoArgsConstructor
 @lombok.experimental.SuperBuilder
-public class CommentResp extends BaseBean {
+public class MessageResp extends BaseBean {
 
     String content;
 
     String createdBy;
 
     @Builder.Default
-    List<CommentResp> replies = new ArrayList<>();
+    List<MessageResp> replies = new ArrayList<>();
 
 }

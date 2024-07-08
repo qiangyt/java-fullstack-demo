@@ -13,8 +13,7 @@ import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.sdk.resp.CommentResp;
-import com.example.demo.sdk.resp.PostResp;
+import com.example.demo.sdk.resp.MessageResp;
 import com.example.demo.sdk.resp.UserResp;
 
 import com.example.demo.sdk.req.CommentReq;
@@ -34,7 +33,7 @@ import org.springframework.security.core.Authentication;
 @lombok.Setter
 @Validated
 @RestController
-@RequestMapping(path = "/rest", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/rest", produces = APPLICATION_JSON_VALUE)
 public class DemoApiV1Rest {
 
     @Autowired
@@ -67,18 +66,18 @@ public class DemoApiV1Rest {
     }
 
     @GetMapping("/posts")
-    public List<PostResp> listAllPosts() {
+    public List<MessageResp> listAllPosts() {
         return getFacade().listAllPosts();
     }
 
-    @PostMapping("/postsd/{postId}/comments")
+    @PostMapping("/posts/{postId}/comments")
     public String newComment(@PathVariable String postId, @RequestBody @Valid CommentReq req) {
         return getFacade().newComment(postId, req);
     }
 
-    @GetMapping("/posts/{postId}/comments")
-    public List<CommentResp> listComments(@PathVariable String postId) {
-        return getFacade().listComments(postId);
-    }
+    //@GetMapping("/posts/{postId}/comments")
+    //public List<MessageResp> listAllPosts(@PathVariable String postId) {
+    //    return getFacade().listComments(postId);
+    //}
 
 }

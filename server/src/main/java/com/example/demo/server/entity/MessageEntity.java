@@ -13,30 +13,42 @@ import org.mapstruct.factory.Mappers;
 
 import io.github.qiangyt.common.bean.BaseEntity;
 
-import com.example.demo.sdk.resp.PostResp;
+import com.example.demo.sdk.resp.MessageResp;
+import com.example.demo.sdk.req.CommentReq;
 import com.example.demo.sdk.req.PostReq;
+
+
 
 @lombok.Getter
 @lombok.Setter
 @lombok.NoArgsConstructor
 @lombok.experimental.SuperBuilder
 @Entity
-@Table(name = "demo_post")
-public class PostEntity extends BaseEntity {
+@Table(name = "demo_message")
+public class MessageEntity extends BaseEntity {
 
     @Mapper
-    public static interface PostMapper {
+    public static interface MessageMapper {
 
-        PostEntity map(PostReq req);
+        MessageEntity map(CommentReq req);
+
+        MessageEntity map(PostReq req);
 
         @Mapping(target = "createdBy", source = "entity.createdBy.name")
-        PostResp map(PostEntity entity);
+        MessageResp map(MessageEntity entity);
     }
 
-    public static final PostMapper POST_MAPPER = Mappers.getMapper(PostMapper.class);
+    public static final MessageMapper MAPPER = Mappers.getMapper(MessageMapper.class);
 
     @Column
     String content;
+
+    @Column(name = "post_id")
+    String postId;
+
+    // if the parentCommentId is not null, this is a comment replies to another comment, otherwise it is a comment replies to the post
+    @Column(name = "parent_comment_id")
+    String parentCommentId;
 
     // @CreatedBy
     @ManyToOne(fetch = FetchType.EAGER)

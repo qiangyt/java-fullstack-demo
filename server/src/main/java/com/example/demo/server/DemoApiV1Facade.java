@@ -9,22 +9,21 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.sdk.DemoApiV1;
-import com.example.demo.sdk.resp.CommentResp;
-import com.example.demo.sdk.resp.PostResp;
+import com.example.demo.sdk.resp.MessageResp;
 import com.example.demo.sdk.resp.UserResp;
 import com.example.demo.sdk.req.CommentReq;
 import com.example.demo.sdk.req.PostReq;
 import com.example.demo.sdk.req.SignUpReq;
 import com.example.demo.server.entity.UserEntity;
-import com.example.demo.server.service.CommentService;
-import com.example.demo.server.service.PostService;
+import com.example.demo.server.service.MessageService;
 import com.example.demo.server.service.UserService;
 
 import io.github.qiangyt.common.security.AuthService;
 import io.github.qiangyt.common.security.AuthUser;
 
 /**
- * The server-side API facade. Manages the transaction boundary, actually
+ * The server-side API facade. 
+ * Manages the transaction boundary, actually
  */
 @Service
 @lombok.Setter
@@ -36,10 +35,7 @@ public class DemoApiV1Facade implements DemoApiV1 {
     UserService userService;
 
     @Autowired
-    PostService postService;
-
-    @Autowired
-    CommentService commentService;
+    MessageService messageService;
 
     @Autowired
     AuthService authService;
@@ -64,25 +60,19 @@ public class DemoApiV1Facade implements DemoApiV1 {
     @Override
     public String newPost(PostReq req) {
         var creator = currentUser();
-        return getPostService().newPost(creator, req);
-    }
-
-    @Override
-    public List<PostResp> listAllPosts() {
-        return getPostService().listAllPosts();
+        return getMessageService().newPost(creator, req);
     }
 
     @Override
     public String newComment(String postId, CommentReq req) {
-        getPostService().ensurePostExists(postId);
+        getMessageService().ensurePostExists(postId);
         var creator = currentUser();
-        return getCommentService().newComment(creator, postId, req);
+        return getMessageService().newComment(creator, postId, req);
     }
 
     @Override
-    public List<CommentResp> listComments(String postId) {
-        getPostService().ensurePostExists(postId);
-        return getCommentService().listComments(postId);
+    public List<MessageResp> listAllPosts() {
+        return getMessageService().listAllPosts();
     }
 
     public String generateJwt(Authentication auth) {
