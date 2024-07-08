@@ -1,0 +1,86 @@
+###
+POST http://localhost:8080/rest/signup
+Content-Type: application/json
+
+{
+  "name": "admin",
+  "password": "123456A@b",
+  "email": "admin@example.com"
+}
+
+###
+POST http://localhost:8080/rest/signin
+Content-Type: application/application/json
+
+{
+  "name": "admin",
+  "password": "123456A@b"
+}
+
+###
+GET http://localhost:8080/rest/posts
+
+###
+POST http://localhost:8080/rest/posts
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjMwMzI1MzcsImlhdCI6MTcyMDQ0MDUzNywic2NvcGUiOiJhcHAifQ.jL6X6Uw25ngb2LiRCCJ5UlqZOMsJBVUA2EUF2fTdmYXLOh7bDUrqOUvFaqfZ7yL41PXHUFzusCsw1Y5jgurTOfyl_RsNnsLN01IgIJ-zsiivpK0MuupnHgDMpm6iD-J8EUr8N3R2Q_rBMm0GFYQ1PEiI0YMafxnaxDiTDdcgDV5VYhVQNibb-EKmszJkhzu_1qHwg6k9tETxxnl1cqy7j8l0aX5iLul0hw_kJMqpgPP6Ko8PKgeJx52OAc8epq_tmTwqZtrMicp60Dh4nSfe0EIggajGwpKWMFoGvc15AsKwwzTPM-si93g_yvyhmllhcfsrOcsl7FnZtrTyoKAxlw
+
+{
+  "content": "post 3"
+}
+
+###
+POST http://localhost:8080/rest/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjMwMzI1MzcsImlhdCI6MTcyMDQ0MDUzNywic2NvcGUiOiJhcHAifQ.jL6X6Uw25ngb2LiRCCJ5UlqZOMsJBVUA2EUF2fTdmYXLOh7bDUrqOUvFaqfZ7yL41PXHUFzusCsw1Y5jgurTOfyl_RsNnsLN01IgIJ-zsiivpK0MuupnHgDMpm6iD-J8EUr8N3R2Q_rBMm0GFYQ1PEiI0YMafxnaxDiTDdcgDV5VYhVQNibb-EKmszJkhzu_1qHwg6k9tETxxnl1cqy7j8l0aX5iLul0hw_kJMqpgPP6Ko8PKgeJx52OAc8epq_tmTwqZtrMicp60Dh4nSfe0EIggajGwpKWMFoGvc15AsKwwzTPM-si93g_yvyhmllhcfsrOcsl7FnZtrTyoKAxlw
+
+{
+  "content": "message 3",
+  "parentId": "SIR-jmqsTPiIxT82QKHqtQ"
+}
+
+###
+POST http://localhost:8080/rest/posts/kaoIO-x6Tv2hjs69QTlSFA/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjMwMzI1MzcsImlhdCI6MTcyMDQ0MDUzNywic2NvcGUiOiJhcHAifQ.jL6X6Uw25ngb2LiRCCJ5UlqZOMsJBVUA2EUF2fTdmYXLOh7bDUrqOUvFaqfZ7yL41PXHUFzusCsw1Y5jgurTOfyl_RsNnsLN01IgIJ-zsiivpK0MuupnHgDMpm6iD-J8EUr8N3R2Q_rBMm0GFYQ1PEiI0YMafxnaxDiTDdcgDV5VYhVQNibb-EKmszJkhzu_1qHwg6k9tETxxnl1cqy7j8l0aX5iLul0hw_kJMqpgPP6Ko8PKgeJx52OAc8epq_tmTwqZtrMicp60Dh4nSfe0EIggajGwpKWMFoGvc15AsKwwzTPM-si93g_yvyhmllhcfsrOcsl7FnZtrTyoKAxlw
+
+{
+  "parentId": "Cymr578vQkKhuB8ifTwqSA",
+  "content": "message 1-1"
+}
+
+###
+POST http://localhost:8080/rest/posts/kaoIO-x6Tv2hjs69QTlSFA/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjMwMzI1MzcsImlhdCI6MTcyMDQ0MDUzNywic2NvcGUiOiJhcHAifQ.jL6X6Uw25ngb2LiRCCJ5UlqZOMsJBVUA2EUF2fTdmYXLOh7bDUrqOUvFaqfZ7yL41PXHUFzusCsw1Y5jgurTOfyl_RsNnsLN01IgIJ-zsiivpK0MuupnHgDMpm6iD-J8EUr8N3R2Q_rBMm0GFYQ1PEiI0YMafxnaxDiTDdcgDV5VYhVQNibb-EKmszJkhzu_1qHwg6k9tETxxnl1cqy7j8l0aX5iLul0hw_kJMqpgPP6Ko8PKgeJx52OAc8epq_tmTwqZtrMicp60Dh4nSfe0EIggajGwpKWMFoGvc15AsKwwzTPM-si93g_yvyhmllhcfsrOcsl7FnZtrTyoKAxlw
+
+{
+  "parentId": "Cymr578vQkKhuB8ifTwqSA",
+  "content": "message 1-2"
+}
+
+###
+POST http://localhost:8080/rest/posts/kaoIO-x6Tv2hjs69QTlSFA/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjMwMzI1MzcsImlhdCI6MTcyMDQ0MDUzNywic2NvcGUiOiJhcHAifQ.jL6X6Uw25ngb2LiRCCJ5UlqZOMsJBVUA2EUF2fTdmYXLOh7bDUrqOUvFaqfZ7yL41PXHUFzusCsw1Y5jgurTOfyl_RsNnsLN01IgIJ-zsiivpK0MuupnHgDMpm6iD-J8EUr8N3R2Q_rBMm0GFYQ1PEiI0YMafxnaxDiTDdcgDV5VYhVQNibb-EKmszJkhzu_1qHwg6k9tETxxnl1cqy7j8l0aX5iLul0hw_kJMqpgPP6Ko8PKgeJx52OAc8epq_tmTwqZtrMicp60Dh4nSfe0EIggajGwpKWMFoGvc15AsKwwzTPM-si93g_yvyhmllhcfsrOcsl7FnZtrTyoKAxlw
+
+{
+  "parentId": "Cymr578vQkKhuB8ifTwqSA",
+  "content": "message 1-3"
+}
+
+
+###
+POST http://localhost:8080/rest/token
+Content-Type: application/json
+Authorization: Basic eyJh2bGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjI5MjY3NzUsImlhdCI6MTcyMDMzNDc3NSwic2NvcGUiOiJhcHAifQ.lvWnEM82apLYc-nqRH4nkPxibRwZ2mgC_F_4EvQVj-aDcw1lUQ6xVbUB8yvPYf_gWf4jTxwiwMwZKFli6uxCtTXglj3h18oR7h2m3MLuU8twctrpqvZ7JOWA_o1eavdoNCCcpTE4ZS7tVYNzC37jh-m71QBB1_RBvDPlW1LGzIR82KIrKDHQBZuKeiy4s3l2w1Vr-O_ZVlgblBlNqVAEN05XzVl0q7FeeSZM_364E2G_Zqx00kBsbbo9_MSM3DqSFjMFeFCDrPCYeG9zguYfaBRaeG3XFAm5risMcY2gxRsXtod-VI0BcSrgdxIjIf1cmyYX_vDFAxnCdVCg4LTYPg
+
+
+###
+GET http://localhost:8080/rest/hello
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjMwMTYzNTgsImlhdCI6MTcyMDQyNDM1OCwic2NvcGUiOiJhcHAifQ.j62NQUoMdH6aoW82-eawld7WwB0_olz8xVIKQjxr2YBPUXBzok-mIRJ2riazXsRPclWVPgf-6QRQ3NvhQgmMLx76fQRnNztEx6B0Pm0yyTZE5gzSRMtqu2xJ9S0yyvhRzA-jKCg8XaVH1OcEIGFgnd5QYvupu3sA18y730exm02NeRtCAjibY_cOmhyz5f9BjUC56Yp2It1FI2FzYL636fgkWsHwJZf1Ore4yFgGqYvO-whkJeRMM7j3Dkj-vR9C6AJlqT2eObB-gMj6vdyt7jnEvVB2-dQb_y6Ql_9UDUE_dykAjRF9l6GkXEdjg7KWw2uRqXacPmwV0LLbnuuHCQ
+
+###
+POST http://localhost:8080/rest/posts
+Content-Type: application/json

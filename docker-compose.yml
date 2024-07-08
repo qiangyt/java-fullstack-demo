@@ -21,9 +21,19 @@ services:
       context: ./server
       dockerfile: Dockerfile
     env_file: ./default.env
-    ports:
-      - 8080:8080
-      - 8888:8888
+    #ports:
+    #  - 8080:8080
+    #  - 8888:8888
     depends_on:
       mysql:
         condition: service_healthy
+
+  nginx:
+    container_name: qiangyt.demo.nginx
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    depends_on:
+      - server
