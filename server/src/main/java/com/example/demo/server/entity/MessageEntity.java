@@ -17,8 +17,6 @@ import com.example.demo.sdk.resp.MessageResp;
 import com.example.demo.sdk.req.CommentReq;
 import com.example.demo.sdk.req.PostReq;
 
-
-
 @lombok.Getter
 @lombok.Setter
 @lombok.NoArgsConstructor

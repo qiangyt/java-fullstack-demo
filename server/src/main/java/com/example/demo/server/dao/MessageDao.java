@@ -12,10 +12,11 @@ import org.springframework.stereotype.Repository;
 @Nullable
 public interface MessageDao extends JpaDao<MessageEntity, String> {
 
-    //@Query("SELECT e FROM MessageEntity e WHERE e.parentId IS NULL ORDER BY e.createdAt DESC")
-    //List<MessageEntity> findPosts();
+    // @Query("SELECT e FROM MessageEntity e WHERE e.parentId IS NULL ORDER BY e.createdAt DESC")
+    // List<MessageEntity> findPosts();
 
-    //@Query("SELECT e FROM MessageEntity e WHERE e.postId in (:postId) AND e.parentId IS NOT NULL ORDER BY e.createdAt DESC")
-    //List<MessageEntity> findCommentsByPostId(Collection<String> postId);
+    // @Query("SELECT e FROM MessageEntity e WHERE e.postId in (:postId) AND e.parentId IS NOT NULL ORDER BY e.createdAt
+    // DESC")
+    // List<MessageEntity> findCommentsByPostId(Collection<String> postId);
 
 }

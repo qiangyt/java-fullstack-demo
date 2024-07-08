@@ -22,8 +22,7 @@ import io.github.qiangyt.common.security.AuthService;
 import io.github.qiangyt.common.security.AuthUser;
 
 /**
- * The server-side API facade. 
- * Manages the transaction boundary, actually
+ * The server-side API facade. Manages the transaction boundary, actually
  */
 @Service
 @lombok.Setter

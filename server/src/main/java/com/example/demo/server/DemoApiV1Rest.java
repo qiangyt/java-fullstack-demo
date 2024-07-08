@@ -70,10 +70,10 @@ public class DemoApiV1Rest {
         return getFacade().listAllPosts();
     }
 
-    //@GetMapping("/posts/{postId}/comments")
-    //public List<MessageResp> listAllPosts(@PathVariable String postId) {
-    //    return getFacade().listComments(postId);
-    //}
+    // @GetMapping("/posts/{postId}/comments")
+    // public List<MessageResp> listAllPosts(@PathVariable String postId) {
+    // return getFacade().listComments(postId);
+    // }
 
     @PostMapping("/comments")
     public MessageResp newComment(@RequestBody @Valid CommentReq req) {

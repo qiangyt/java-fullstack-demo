@@ -32,7 +32,7 @@ public class MessageService {
 
     public void ensurePostExists(String id) {
         getDao().get(true, id);
-        //TODO: ensure it is a post instead of a comment
+        // TODO: ensure it is a post instead of a comment
     }
 
     public MessageResp newComment(UserEntity creator, CommentReq req) {
@@ -55,7 +55,7 @@ public class MessageService {
         r.setId(id);
         r.setCreatedBy(creator);
         r.setPostId(id);
-        //r.setParentId(null);
+        // r.setParentId(null);
 
         return MAPPER.map(getDao().save(r));
     }

@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-
 // TODO：改用accessToken + refreshToken
 @lombok.Getter
 public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
@@ -50,10 +49,10 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
             var c = JacksonHelper.from(body, UserCredentials.class);
             if (c == null) {
                 return null;
-                //res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                //res.setContentType("application/json");
-                //var errorResponse = Map.of("error", "Request body is missing");
-                //res.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+                // res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                // res.setContentType("application/json");
+                // var errorResponse = Map.of("error", "Request body is missing");
+                // res.getWriter().write(objectMapper.writeValueAsString(errorResponse));
             }
             return authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(c.getName(), c.getPassword(), Collections.emptyList()));

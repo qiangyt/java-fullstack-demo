@@ -46,5 +46,5 @@ public class DemoAppV1Client implements DemoApiV1 {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'newComment'");
     }
-    
+
 }

@@ -50,16 +50,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authConfig,
             ObjectMapper objectMapper) throws Exception {
-        //var publicPaths = new String[] { getTokenPath(), getSignUpPath(), getSignInPath(), "/rest/posts" };
+        // var publicPaths = new String[] { getTokenPath(), getSignUpPath(), getSignInPath(), "/rest/posts" };
 
         // http.authorizeHttpRequests(a ->
         // a.requestMatchers(publicPaths).permitAll().anyRequest().authenticated());
         http.authorizeHttpRequests(a -> {
-            a.requestMatchers("/rest/signin").permitAll()
-                    .requestMatchers("/rest/signup").permitAll()
-                    .requestMatchers("/rest/token").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/rest/posts").permitAll()
-                    .anyRequest().authenticated();
+            a.requestMatchers("/rest/signin").permitAll().requestMatchers("/rest/signup").permitAll()
+                    .requestMatchers("/rest/token").permitAll().requestMatchers(HttpMethod.GET, "/rest/posts")
+                    .permitAll().anyRequest().authenticated();
         });
 
         var jwtAuthFilter = new JwtAuthFilter(authConfig.getAuthenticationManager(), getAuthService(), objectMapper,
