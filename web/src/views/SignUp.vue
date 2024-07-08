@@ -2,20 +2,20 @@
   <el-container style="justify-content: center; align-items: center;">
     <el-card class="box-card" style="width: 400px;">
       <div slot="header" class="clearfix">
-        <span>登录</span>
+        <span>注册</span>
       </div>
-      <el-form :model="signInForm" :rules="rules" ref="signInFormRef" label-width="120px">
-        <el-form-item label="用户名/Email" prop="name">
-          <el-input v-model="signInForm.name"></el-input>
+      <el-form :model="signUpForm" :rules="rules" ref="signUpFormRef" label-width="120px">
+        <el-form-item label="用户名" prop="name">
+          <el-input v-model="signUpForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="signUpForm.email"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input type="password" v-model="signInForm.password"></el-input>
+          <el-input type="password" v-model="signUpForm.password"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-checkbox v-model="signInForm.rememberMe">记住我</el-checkbox>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleLogin">登录</el-button>
+          <el-button type="primary" @click="handleSignUp">注册</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -32,10 +32,10 @@ import * as sessionApi from '@/services/session'
 const router = useRouter()
 const sessionStore = useSessionStore()
 
-const signInForm = reactive({
+const signUpForm = reactive({
   name: '',
   password: '',
-  rememberMe: false
+  email: ''
 });
 
 const rules = {
@@ -44,20 +44,22 @@ const rules = {
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' }
+  ],
+  email: [
+    { required: true, message: '请输入Email', trigger: 'blur' }
   ]
 };
 
-const signInFormRef = ref(null);
+const signUpFormRef = ref(null);
 
-const handleLogin = async () => {
-  await signInFormRef.value.validate(async(valid) => {
+const handleSignUp = async () => {
+  await signUpFormRef.value.validate(async(valid) => {
     if (valid) {
-      const resp = await sessionApi.signIn(signInForm.name, signInForm.password);
+      const resp = await sessionApi.signUp(signUpForm.name, signUpForm.password, signUpForm.email);
 
-      ElMessage.success('登录成功');
-      sessionStore.signIn(resp, signInForm.rememberMe);
+      ElMessage.success('注册成功');
 
-      router.push({ name: 'MessageBoard' })
+      router.push({ name: 'SignIn' })
     } else {
       ElMessage.error('请检查表单填写是否正确');
     }
