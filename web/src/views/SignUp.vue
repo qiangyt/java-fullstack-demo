@@ -1,9 +1,11 @@
 <template>
-  <el-container style="justify-content: center; align-items: center;">
-    <el-card class="box-card" style="width: 400px;">
-      <div slot="header" class="clearfix">
-        <span>注册</span>
-      </div>
+  <el-container style="justify-content: center; align-items: center">
+    <el-card class="box-card" style="width: 400px">
+      <template v-slot:header>
+        <div class="clearfix">
+          <span>注册</span>
+        </div>
+      </template>
       <el-form :model="signUpForm" :rules="rules" ref="signUpFormRef" label-width="120px">
         <el-form-item label="用户名" prop="name">
           <el-input v-model="signUpForm.name"></el-input>
@@ -23,48 +25,40 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
-import { ElMessage } from 'element-plus';
+import { reactive, ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
-import { useSessionStore } from '@/stores/session'
 import * as sessionApi from '@/services/session'
 
 const router = useRouter()
-const sessionStore = useSessionStore()
 
 const signUpForm = reactive({
   name: '',
   password: '',
   email: ''
-});
+})
 
 const rules = {
-  name: [
-    { required: true, message: '请输入用户名', trigger: 'blur' }
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' }
-  ],
-  email: [
-    { required: true, message: '请输入Email', trigger: 'blur' }
-  ]
-};
+  name: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  email: [{ required: true, message: '请输入Email', trigger: 'blur' }]
+}
 
-const signUpFormRef = ref(null);
+const signUpFormRef = ref(null)
 
 const handleSignUp = async () => {
-  await signUpFormRef.value.validate(async(valid) => {
+  await signUpFormRef.value.validate(async (valid) => {
     if (valid) {
-      const resp = await sessionApi.signUp(signUpForm.name, signUpForm.password, signUpForm.email);
+      await sessionApi.signUp(signUpForm.name, signUpForm.password, signUpForm.email)
 
-      ElMessage.success('注册成功');
+      ElMessage.success('注册成功')
 
       router.push({ name: 'SignIn' })
     } else {
-      ElMessage.error('请检查表单填写是否正确');
+      ElMessage.error('请检查表单填写是否正确')
     }
-  });
-};
+  })
+}
 </script>
 
 <style scoped>

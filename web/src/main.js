@@ -10,9 +10,8 @@ import router from './router'
 const pinia = createPinia()
 const app = createApp(App)
 
-
 app.use(router)
-app.use(ElementPlus/*, { size: 'small', zIndex: 3000 }*/)
+app.use(ElementPlus /*, { size: 'small', zIndex: 3000 }*/)
 app.use(pinia)
 
 app.mount('#app')

@@ -1,9 +1,11 @@
 <template>
-  <el-container style="justify-content: center; align-items: center;">
-    <el-card class="box-card" style="width: 400px;">
-      <div slot="header" class="clearfix">
-        <span>登录</span>
-      </div>
+  <el-container style="justify-content: center; align-items: center">
+    <el-card class="box-card" style="width: 400px">
+      <template v-slot:header>
+        <div class="clearfix">
+          <span>登录</span>
+        </div>
+      </template>
       <el-form :model="signInForm" :rules="rules" ref="signInFormRef" label-width="120px">
         <el-form-item label="用户名/Email" prop="name">
           <el-input v-model="signInForm.name"></el-input>
@@ -23,8 +25,8 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
-import { ElMessage } from 'element-plus';
+import { reactive, ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import * as sessionApi from '@/services/session'
@@ -36,33 +38,29 @@ const signInForm = reactive({
   name: '',
   password: '',
   rememberMe: false
-});
+})
 
 const rules = {
-  name: [
-    { required: true, message: '请输入用户名', trigger: 'blur' }
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' }
-  ]
-};
+  name: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+}
 
-const signInFormRef = ref(null);
+const signInFormRef = ref(null)
 
 const handleLogin = async () => {
-  await signInFormRef.value.validate(async(valid) => {
+  await signInFormRef.value.validate(async (valid) => {
     if (valid) {
-      const resp = await sessionApi.signIn(signInForm.name, signInForm.password);
+      const resp = await sessionApi.signIn(signInForm.name, signInForm.password)
 
-      ElMessage.success('登录成功');
-      sessionStore.signIn(resp, signInForm.rememberMe);
+      ElMessage.success('登录成功')
+      sessionStore.signIn(resp, signInForm.rememberMe)
 
       router.push({ name: 'MessageBoard' })
     } else {
-      ElMessage.error('请检查表单填写是否正确');
+      ElMessage.error('请检查表单填写是否正确')
     }
-  });
-};
+  })
+}
 </script>
 
 <style scoped>
