@@ -3,7 +3,7 @@
 # 构建和运行
 
   1. 确认已启动了docker
-  2. 执行`up.cmd`（Windows），Mac上可以执行`./up.sh`（条件所限，Mac中未实测），会开始使用docker-compose构建整套环境并启动这个环境，最终可以在浏览器中自动打开网站首页（ http://localhost:8000 ），包括：
+  2. 执行`up.cmd`（Windows），Mac上可以执行`./up.sh`（条件所限，Mac中未实测），会开始使用`docker-compose`构建整套环境并启动这个环境，最终可以在浏览器中自动打开网站首页（ http://localhost:8000 ），包括：
   
   - MySQL：8.x
   
@@ -15,7 +15,8 @@
 
   注：
   - 因为近期国内docker镜像问题，拉取docker image最好是设置合适的proxy，这样后续构建时访问npm registry也会更好。
-  - 因为docker pull, maven build和npm install，首次构建比较耗时。
+  - 因为`docker pull`, `maven build`和`npm install`，首次构建比较耗时。
+  - 新版本的`docker-compose`已经内置在docker中，所以执行上述脚本里的`docker-compose`可能会出错说找不到`docker-compose`这个命令，这时请手动编辑下脚本，把`docker-compose`改为`docker compose`再重新执行。
 
 # 关于数据库初始化：
 
