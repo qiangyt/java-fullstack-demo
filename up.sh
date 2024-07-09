@@ -3,6 +3,6 @@
 docker-compose up -d --build --remove-orphans
 # docker compose up -d --build --remove-orphans
 
-sleep 5
+sleep 10
 
 open http://localhost:8000
