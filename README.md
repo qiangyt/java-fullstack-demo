@@ -1,6 +1,7 @@
 # 构建和运行
 
-  在根目录下执行`./up.sh`(Mac)或`./up.cmd`（Windows），会使用docker-compose构建整套环境然后启动这个环境，最终可以在浏览器中自动打开网站首页（条件所限，Mac中未测试这一点），包括：
+  1. 确认已启动了docker
+  2. 执行`up.cmd`（Windows），Mac上可以执行`./up.sh`（条件所限，Mac中未测试这一点），会开始使用docker-compose构建整套环境并启动这个环境，最终可以在浏览器中自动打开网站首页（http://localhost:8000），包括：
   
   - MySQL：8.x
   
@@ -10,7 +11,7 @@
   - Nginx: 
     在docker容器中build并部署Vue App，并配置8000端口上的前端静态资源服务器, 并反向代理REST API到Java server端
 
-  然后打开浏览器，访问http://localhost:8000   即可访问。
+  注：因为近期国内docker镜像问题，拉取docker image最好是设置合适的proxy，这样后续构建时访问npm registry也会更好。
 
 # 关于数据库初始化：
 
