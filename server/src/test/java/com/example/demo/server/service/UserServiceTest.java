@@ -1,28 +1,39 @@
+
 package com.example.demo.server.service;
 
 
-import com.example.demo.server.dao.UserDao;
-import com.example.demo.server.entity.UserEntity;
-import com.example.demo.server.service.UserService;
-import com.example.demo.sdk.req.SignUpReq;
 import io.github.qiangyt.common.err.BadRequest;
 import io.github.qiangyt.common.misc.IdGenerator;
-import org.junit.jupiter.api.BeforeEach;
+import com.example.demo.sdk.ErrorCode;
+import com.example.demo.sdk.req.SignUpReq;
+import com.example.demo.server.dao.UserDao;
+import com.example.demo.server.entity.UserEntity;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import static org.mockito.Mockito.*;
-import org.mockito.MockitoAnnotations;
-import static org.junit.jupiter.api.Assertions.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.server.ResponseStatusException;
+import java.lang.reflect.Field;
+import static org.mockito.Mockito.any;
 
 
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
     @Mock
-    private UserDao userDao;
+    private UserDao dao;
 
     @Mock
     private IdGenerator idGenerator;
@@ -33,12 +44,7 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    @BeforeEach
-    void setUp() {
-        // Initialize mocks before each test method
-    }
-
-    // Add test methods here
+    // ????????????
 
 
 
@@ -47,207 +53,424 @@ public class UserServiceTest {
 
     @Test
     void testGetByNameWhenUserExists() {
-        String userName = "existingUser";
-        UserEntity userEntity = new UserEntity();
-        userEntity.setName(userName);
-        
-        when(userDao.getByName(userName)).thenReturn(userEntity);
-
-        UserEntity result = userService.getByName(userName);
-        
-        verify(userDao, times(1)).getByName(userName);
-        assertNotNull(result);
-        assertEquals(userName, result.getName());
+        String name = "user123";
+        UserEntity user = new UserEntity();
+        when(dao.getByName(name)).thenReturn(user);
+            
+        UserEntity result = userService.getByName(name);
+            
+        assertEquals(user, result);
     }
-
+    
     @Test
     void testGetByNameWhenUserDoesNotExist() {
-        String userName = "nonExistingUser";
+        String name = "nonexistentUser";
+        when(dao.getByName(name)).thenReturn(null);
+    
+        assertThrows(BadRequest.class, () -> userService.getByName(name));
+    }
+    
+    @Test
+    void testGetByNameWithNullName() {
+        String name = null;
+        doNothing().when(dao).getByName(any());
         
-        when(userDao.getByName(userName)).thenReturn(null);
+       assertNull(userService.getByName(name));
+    }
+    
+    @Test
+    void testGetByNameWithEmptyString() {
+        String name = "";
+        UserEntity result = userService.getByName(name);
+            
+       assertNull(result);
+    }
 
-        UserEntity result = userService.getByName(userName);
+
+    // test cases for void <init>() ---------------------
+
+    
+    @Test
+    void testSignUp_ExistingUser() {
+        // Arrange
+        String name = "testuser";
+        String email = "test@example.com";
+        String password = "password123!";
         
-        verify(userDao, times(1)).getByName(userName);
-        assertNull(result);
+        UserEntity existingUser = new UserEntity();
+        when(dao.getByName(name)).thenReturn(existingUser);
+        
+        // Act & Assert
+        assertThrows(BadRequest.class, () -> {
+            userService.signUp(name, email, password);
+        });
+    }
+    
+    @Test
+    void testSignUp_NewUser() throws Exception{
+        // Arrange
+        String name = "newuser";
+        String email = "new@example.com";
+        String password = "password123!";
+        
+        when(dao.getByEmail(email)).thenReturn(null);
+        when(dao.getByName(name)).thenReturn(null);
+        when(idGenerator.newId()).thenReturn("TESTID");
+        when(passwordEncoder.encode(anyString())).thenReturn("ENCRYPTED_PASSWORD");
+        
+        // Act
+        UserEntity result = userService.signUp(name, email, password);
+        
+        // Assert
+        verify(dao).create(result);
+        
+        assertEquals("ENCRYPTED_PASSWORD", result.getPassword());
+        assertEquals("TESTID", result.getId());
     }
 
 
     // test cases for void setIdGenerator(io.github.qiangyt.common.misc.IdGenerator idGenerator) ---------------------
 
+
+
+    private IdGenerator mockId1, mockId2;
+    private UserDao userDao = Mockito.mock(UserDao.class);
+    private UserService userService;
+
+    @BeforeEach
+    public void setUp() {
+       .userService = new UserService(userDao());
+        mockId1 = Mockito.mock(IdGenerator.class);
+        mockId2 = Mockitomock(IdGenerator.id.class);
+    }
+
     @Test
-    void testSetIdGenerator() {
-        IdGenerator newIdGenerator = mock(IdGenerator.class);
-        userService.setIdGenerator(newIdGenerator);
-        assertSame(newIdGenerator, userService.getIdGenerator());
+    public void testSetIdGeneratorWithFirstGenerator() throws Exception {
+        // Setter up the first ID generator
+        when(mockId1.newId()).thenReturn("test-id-1");
+        userService.setIdGenerator(mockId1);
+
+        // Perform signup
+        UserEntity user = new UserEntity();
+        user.setUsername("test-user");
+        userService.signup(user);
+        
+        // Verify the saved user has the correct ID
+        ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
+        verify(userDao).saveUser(captor.capture());
+        assertEquals("test-id-1", captor.getValue().getId());
+    }
+
+    @Test
+    public void testSetIdGeneratorWithSecondGenerator() throws Exception {
+        // Setup the second ID generator
+        when(mockId2.newId()).thenReturn("test-id-2");
+        userService.setIdGenerator(mockId2);
+
+        // Perform signup
+        UserEntity user = new UserEntity();
+        user.setUsername("another-test-user");
+        userService.signup(user);
+        
+        // Verify the saved user has the correct ID from the second generator
+        ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
+        verify(userDao).saveUser(captor.capture());
+        assertEquals("test-id-2", captor.getValue().getId());
     }
 
 
     // test cases for io.github.qiangyt.common.misc.IdGenerator getIdGenerator() ---------------------
 
     @Test
-        public void testGetIdGenerator() {
-            IdGenerator generator = userService.getIdGenerator();
-            assertNotNull(generator);
-        }
+    public void testGetIdGenerator() {
+        assertEquals(idGenerator, userService.getIdGenerator());
+    }
 
 
     // test cases for void setPasswordEncoder(org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) ---------------------
-
-    @Test
-    void testSetPasswordEncoder() {
-        PasswordEncoder mockEncoder = mock(PasswordEncoder.class);
-        userService.setPasswordEncoder(mockEncoder);
     
-        assertSame(mockEncoder, userService.getPasswordEncoder());
+    // Add this method
+    @Test
+    void setPasswordEncoder_ShouldSetThePasswordEncoder() {
+        PasswordEncoder encoder = Mockito.mock(PasswordEncoder.class);
+        userService.setPasswordEncoder(encoder);
     }
+    
+    // Existing code remains unchanged
 
 
     // test cases for com.example.demo.server.entity.UserEntity signUp(com.example.demo.sdk.req.SignUpReq req) ---------------------
 
-    
     @Test
-    void testSignUpSuccess() {
-        SignUpReq req = SignUpReq.builder()
-            .name("testUser")
-            .email("test@example.com")
-            .password("P@ssw0rd")
-            .build();
+    public void testSignUpNormal() {
+        // Arrange
+        String expectedUsername = "testUser";
+        String expectedPassword = "Test@123456";
+        String expectedEmail = "test@mail.com";
     
-        UserEntity mappedUserEntity = new UserEntity();
-        mappedUserEntity.setName(req.getName());
-        mappedUserEntity.setEmail(req.getEmail());
+        SignUpReq req = new SignUpReq();
+        req.setName(expectedUsername);
+        req.setPassword(expectedPassword);
+        req.setEmail(expectedEmail);
     
-        when(userDao.getByName(req.getName())).thenReturn(null);
-        when(userDao.getByEmail(req.getEmail())).thenReturn(null);
-        when(idGenerator.newId()).thenReturn("newId");
-        when(passwordEncoder.encode(req.getPassword())).thenReturn("hashedPassword");
-        when(userDao.save(any(UserEntity.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(dao.getUser(any())).thenReturn(null);
+        
+        // Assume the generated id
+        String generatedId = idGenerator.newId();
+        when(idGenerator.newId()).thenReturn(generatedId);
     
-        UserEntity savedUser = userService.signUp(req);
+        when(passwordEncoder.encode(expectedPassword)).thenReturn("encoded_password");
     
-        assertEquals("testUser", savedUser.getName());
-        assertEquals("test@example.com", savedUser.getEmail());
-        assertEquals("hashedPassword", savedUser.getPassword());
-        assertEquals("newId", savedUser.getId());
+        // Act
+        UserEntity result = userService.signUp(req);
+    
+        // Assert
+        assertNotNull(result);
+        assertEquals(expectedUsername, result.getUsername());
+        assertEquals(expectedEmail, result.getEmail());
+        assertEquals(generatedId, result.getId());
+        verify(dao).save(any(UserEntity.class));
     }
     
     @Test
-    void testSignUpUserNameDuplicates() {
-        SignUpReq req = SignUpReq.builder()
-            .name("duplicateUser")
-            .email("test@example.com")
-            .password("P@ssw0rd")
-            .build();
+    public void testSignUpDuplicateName() {
+        // Arrange
+       SignUpReq req = new SignUpReq();
+        req.setName("existingUser");
+        
+        when(dao.getUser(req.getName())).thenReturn(new UserEntity());
     
-        UserEntity existingUser = new UserEntity();
-        when(userDao.getByName(req.getName())).thenReturn(existingUser);
-    
+        // Act and Assert
         assertThrows(BadRequest.class, () -> userService.signUp(req));
     }
     
     @Test
-    void testSignUpEmailDuplicates() {
-        SignUpReq req = SignUpReq.builder()
-            .name("testUser")
-            .email("duplicate@example.com")
-            .password("P@ssw0rd")
-            .build();
-    
-        UserEntity existingUser = new UserEntity();
-        when(userDao.getByName(req.getName())).thenReturn(null);
-        when(userDao.getByEmail(req.getEmail())).thenReturn(existingUser);
-    
-        assertThrows(BadRequest.class, () -> userService.signUp(req));
+    public void testSignUpInvalidRequest() {
+        // Arrange
+        SignUpReq invalidReq = new SignUpReq();
+        
+        // Act and Assert
+        assertThrows(BadRequest.class, () -> userService.signUp(invalidReq));
     }
 
 
     // test cases for com.example.demo.server.dao.UserDao getDao() ---------------------
 
     @Test
-    void testGetDao() {
-        UserDao daoFromService = userService.getDao();
-        assertNotNull(daoFromService);
-        assertSame(userDao, daoFromService);
+    void testGetDao_ShouldReturnUser_WhenUserExists() {
+        UserEntity user = new UserEntity();
+        when(dao.get(any(String.class))).thenReturn(user);
+        
+        UserEntity result = userService.getUser("some-id", false);
+        assertEquals(user, result);
+    }
+    
+    @Test
+    void testGetDao_ShouldThrowException_WhenUserDoesNotExistAndEnsureExistsTrue() {
+        when(dao.get(any(String.class))).thenReturn(null);
+        
+        assertThrows(BusinessException.class, () -> {
+            userService.getUser("non-existent-id", true);
+        });
     }
 
 
     // test cases for org.springframework.security.crypto.password.PasswordEncoder getPasswordEncoder() ---------------------
 
     @Test
-    void testGetPasswordEncoder() {
-        PasswordEncoder encoderMock = mock(PasswordEncoder.class);
-        when(userService.getPasswordEncoder()).thenReturn(encoderMock);
+    void usernameExists() {
+        UserEntity existingUser = new UserEntity();
+        existingUser.setUsername("existing");
         
-        PasswordEncoder encoder = userService.getPasswordEncoder();
+        when(dao.findByUsername(any())).thenReturn(existingUser);
         
-        assertNotNull(encoder);
-        assertEquals(encoderMock, encoder);
+        try {
+            userService.signUp(new SignUpReq());
+            fail("Expected exception not thrown");
+        } catch (BadRequest e) {
+            verify(dao).findByUsername(any());
+            assertEquals(ErrorCode.USERNAME_EXISTS, e.getCode());
+        }
+    }
+    
+    @Test
+    void emailExists() {
+        UserEntity existingEmail = new UserEntity();
+        existingEmail.setEmail("existing@example.com");
+        
+        when(dao.findByEmail(any())).thenReturn(existingEmail);
+        
+        try {
+            userService.signUp(new SignUpReq());
+            fail("Expected exception not thrown");
+        } catch (BadRequest e) {
+            verify(dao).findByEmail(any());
+            assertEquals(ErrorCode.EMAIL_EXISTS, e.getCode());
+        }
+    }
+    
+    @Test
+    void successfulRegistration() {
+        when(dao.findByUsername(any())).thenReturn(null);
+        when(dao.findByEmail(any())).thenReturn(null);
+    
+        String encoded = "encoded";
+        when(passwordEncoder.encode(any())).thenReturn(encoded);
+        
+        UserEntity savedUser = new UserEntity();
+        when(dao.saveAndFlush(any())).thenReturn(savedUser);
+    
+        SignUpReq signUpReq = new SignUpReq();
+        signUpReq.setName("username");
+        signUpReq.setPassword("password");
+        signUpReq.setEmail("email@example.com");
+    
+        String result = userService.signUp(signUpReq);
+        
+        verify(passwordEncoder).encode(any());
+        assertThat(result).isEqualTo("username");
     }
 
 
     // test cases for com.example.demo.server.entity.UserEntity getUser(boolean ensureExists, java.lang.String id) ---------------------
 
-    @Test
-    void testGetUser_whenUserExists() {
-        String userId = "testUserId";
-        UserEntity mockUser = new UserEntity();
-        when(userDao.get(true, userId)).thenReturn(mockUser);
 
-        UserEntity user = userService.getUser(true, userId);
 
-        verify(userDao).get(true, userId);
-        assertEquals(mockUser, user);
+
+
+    @Mock
+    private UserDao userDao;
+
+    @InjectMocks
+    private UserService userService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
+    // Test case 1: User exists and ensureExists is true
     @Test
-    void testGetUser_whenUserDoesNotExist() {
-        String userId = "nonExistentUserId";
-        when(userDao.get(false, userId)).thenReturn(null);
+    void getUser_WhenUserExistsAndEnsureExistsIsTrue_ShouldReturnUser() {
+        String id = "test-user-id";
+        UserEntity mockUser = new UserEntity();
+        when(userDao.findById(anyString())).thenReturn(Optional.of(mockUser));
+        
+        ResponseEntity<User> result = userService.getUser(true, id);
+        
+        assert result.getStatusCode().equals(HttpStatus.OK);
+    }
 
-        UserEntity user = userService.getUser(false, userId);
+    // Test case 2: User exists and ensureExists is false
+    @Test
+    void getUser_WhenUserExistsAndEnsureExistsIsFalse_ShouldReturnUser() {
+        String id = "test-user-id";
+        UserEntity mockUser = new UserEntity();
+        when(userDao.findById(anyString())).thenReturn(Optional.of(mockUser));
+        
+        ResponseEntity<User> result = userService.getUser(false, id);
+        
+        assert result.getStatusCode().equals(HttpStatus.OK);
+    }
 
-        verify(userDao).get(false, userId);
-        assertNull(user);
+    // Test case 3: User does not exist and ensureExists is true
+    @Test
+    void getUser_WhenUserDoesNotExistAndEnsureExistsIsTrue_ShouldThrowBadRequest() {
+        String id = "nonexistent-id";
+        when(userDao.findById(anyString())).thenReturn(Optional.empty());
+        
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, 
+            () -> userService.getUser(true, id)
+        );
+        
+        // Assert the status is BAD_REQUEST
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exception.getStatusCode().value());
+        // Verify the exception message includes expected error code
+        assertTrue(exception.getMessage().contains("user.not-found"));
+    }
+
+    // Test case 4: User does not exist and ensureExists is false (Optional)
+    @Test
+    void getUser_WhenUserDoesNotExistAndEnsureExistsIsFalse_ShouldReturnNullOrAppropriateResponse() {
+        String id = "nonexistent-id";
+        when(userDao.findById(anyString())).thenReturn(Optional.empty());
+        
+        ResponseEntity<User> result = userService.getUser(false, id);
+        
+        // Depending on implementation, assert if the return is null or appropriate status
+        assertEquals(HttpStatus.OK.getStatusCode(), result.getStatusCode().value());
+        assertNull(result.getBody());
     }
 
 
     // test cases for com.example.demo.server.entity.UserEntity getByEmail(java.lang.String email) ---------------------
 
     @Test
-        void testGetByEmail_UserExists() {
-            String email = "test@example.com";
-            UserEntity expectedUser = new UserEntity();
-            expectedUser.setEmail(email);
-            
-            when(userDao.getByEmail(email)).thenReturn(expectedUser);
+    public void getByEmail_WhenUserExists_ReturnsUserEntity() {
+        String email = "test@example.com";
+        UserEntity expectedUser = new UserEntity();
+        expectedUser.setEmail(email);
+        
+        when(dao.getByEmail(email)).thenReturn(expectedUser);
+        
+        UserEntity result = userService.getByEmail(email);
+        
+        assertEquals(expectedUser, result);
+    }
     
-            UserEntity actualUser = userService.getByEmail(email);
-    
-            verify(userDao).getByEmail(email);
-            assertEquals(expectedUser, actualUser);
-        }
-    
-        @Test
-        void testGetByEmail_UserDoesNotExist() {
-            String email = "nonexistent@example.com";
-            
-            when(userDao.getByEmail(email)).thenReturn(null);
-    
-            UserEntity actualUser = userService.getByEmail(email);
-    
-            verify(userDao).getByEmail(email);
-            assertNull(actualUser);
-        }
+    @Test
+    public void getByEmail_WhenUserDoesNotExist_ReturnsNull() {
+        String email = "nonexistent@example.com";
+        
+        when(dao.getByEmail(email)).thenReturn(null);
+        
+        UserEntity result = userService.getByEmail(email);
+        
+        assertNull(result);
+    }
 
 
     // test cases for void setDao(com.example.demo.server.dao.UserDao dao) ---------------------
 
-    @Test
-    void testSetDao() {
-        UserDao newDao = mock(UserDao.class);
-        userService.setDao(newDao);
-        assertSame(newDao, userService.getDao());
+
+
+
+@RunWith(JUnit4.class)
+
+    @Mock
+    UserDao userDao;
+
+    @InjectMocks
+    UserService userService;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
     }
 
-}
+    @After
+    public void tearDown() {
+        // Cleanup if necessary
+    }
+
+    @Test
+    public void testSetDao() {
+        try {
+            // Create a new UserDao mock
+            UserDao newDao = any(UserDao.class);
+
+            // Set the newDao on userService
+            userService.setDao(newDao);
+
+            // Access the private 'dao' field in UserService
+            Field field = UserService.class.getDeclaredField("dao");
+            field.setAccessible(true);
+            UserDao currentDao = (UserDao) field.get(userService);
+
+            // Verify that the internal dao reference is updated to newDao
+            assertEquals(newDao, currentDao);
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            fail("Unexpected exception while accessing DAO: " + e.getMessage());
+        }
+    }
